@@ -20,14 +20,7 @@ class Producer:
     # Tracks existing topics across all Producer instances
     existing_topics = set([])
 
-    def __init__(
-            self,
-            topic_name,
-            key_schema,
-            value_schema,
-            num_partitions=1,
-            num_replicas=1,
-    ):
+    def __init__(self, topic_name, key_schema, value_schema, num_partitions=1, num_replicas=1):
         """Initializes a Producer object with basic settings"""
         self.topic_name = topic_name
         self.key_schema = key_schema

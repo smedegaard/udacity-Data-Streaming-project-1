@@ -59,7 +59,6 @@ class TimeSimulation:
             Line(Line.colors.red, self.raw_df[self.raw_df["red"]]),
             Line(Line.colors.green, self.raw_df[self.raw_df["green"]]),
         ]
-        logger.info("Train lines ready")
 
     def run(self):
         logger.info("Calling `run()`")

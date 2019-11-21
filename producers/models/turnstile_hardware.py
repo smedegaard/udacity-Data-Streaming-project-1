@@ -5,7 +5,7 @@ import random
 
 import pandas as pd
 
-from .producer import Producer
+from models.producer import Producer
 
 logger = logging.getLogger(__name__)
 
