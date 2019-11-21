@@ -1,13 +1,11 @@
 """Defines functionality relating to train lines"""
-import collections
 from enum import IntEnum
 import logging
 
-from models import Station, Train
-
+from .station import Station
+from .train import Train
 
 logger = logging.getLogger(__name__)
-
 
 class Line:
     """Contains Chicago Transit Authority (CTA) Elevated Loop Train ("L") Station Data"""
@@ -16,6 +14,7 @@ class Line:
     num_directions = 2
 
     def __init__(self, color, station_data, num_trains=10):
+        logger.info("Line.init()")
         self.color = color
         self.num_trains = num_trains
         self.stations = self._build_line_data(station_data)
@@ -25,6 +24,7 @@ class Line:
 
     def _build_line_data(self, station_df):
         """Constructs all stations on the line"""
+        logger.info("build_line_data()")
         stations = station_df["station_name"].unique()
 
         station_data = station_df[station_df["station_name"] == stations[0]]
@@ -46,6 +46,7 @@ class Line:
         return line
 
     def _build_trains(self):
+        logger.info("build_trains()")
         """Constructs and assigns train objects to stations"""
         trains = []
         curr_loc = 0
@@ -66,6 +67,7 @@ class Line:
         return trains
 
     def run(self, timestamp, time_step):
+        logger.info("Line.run()")
         """Advances trains between stations in the simulation. Runs turnstiles."""
         self._advance_turnstiles(timestamp, time_step)
         self._advance_trains()

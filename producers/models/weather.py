@@ -8,7 +8,7 @@ import urllib.parse
 
 import requests
 
-from models.producer import Producer
+from .producer import Producer
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class Weather(Producer):
         "status", "sunny partly_cloudy cloudy windy precipitation", start=0
     )
 
-    rest_proxy_url = "http://localhost:8082"
+    rest_proxy_url = "http://rest-proxy:8082"
 
     key_schema = None
     value_schema = None
@@ -30,10 +30,10 @@ class Weather(Producer):
     summer_months = set((6, 7, 8))
 
     def __init__(self, month):
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
+        # TODO: Complete the below by deciding on a topic name
+        # , number of partitions, and number of replicas ✅
         super().__init__(
-            "com.udacity.weather", # TODO: Come up with a better topic name
+            "com.udacity.weather.v1", # TODO: Come up with a better topic name ✅
             key_schema=Weather.key_schema,
             value_schema=Weather.value_schema,
             num_partitions=1,
@@ -41,19 +41,17 @@ class Weather(Producer):
         )
 
         self.status = Weather.status.sunny
-        self.temp = 70.0
+        self.temp = 30.0
         if month in Weather.winter_months:
-            self.temp = 40.0
+            self.temp = 3.0
         elif month in Weather.summer_months:
-            self.temp = 85.0
+            self.temp = 20.0
 
         if Weather.key_schema is None:
             with open(f"{Path(__file__).parents[0]}/schemas/weather_key.json") as f:
                 Weather.key_schema = json.load(f)
 
-        #
-        # TODO: Define this value schema in `schemas/weather_value.json
-        #
+        # TODO: Define this value schema in `schemas/weather_value.json ✅
         if Weather.value_schema is None:
             with open(f"{Path(__file__).parents[0]}/schemas/weather_value.json") as f:
                 Weather.value_schema = json.load(f)
@@ -70,16 +68,16 @@ class Weather(Producer):
 
     def run(self, month):
         self._set_weather(month)
-        # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to
-        # specify the Avro schemas and verify that you are using the correct Content-Type header.
+        # TODO: Complete the function by posting a weather event to REST Proxy. Make sure to ✅
+        # specify the Avro schemas and verify that you are using the correct Content-Type header. ✅
         
         resp = requests.post(
-            # TODO: What URL should be POSTed to?
+            # TODO: What URL should be POSTed to? ✅
             f"{Weather.rest_proxy_url}/topics/{self.topic_name}",
-            # TODO: What Headers need to bet set?
+            # TODO: What Headers need to bet set? ✅
             headers={"Content-Type": "application/vnd.kafka.avro.v2+json"},
             data=json.dumps({
-               # TODO: Provide key schema, value schema, and records
+               # TODO: Provide key schema, value schema, and records ✅
                "key_schema": json.dumps(Weather.key_schema),
                 "value_schema": json.dumps(Weather.value_schema),
                 "records": [{

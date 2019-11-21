@@ -26,17 +26,21 @@ class TimeSimulation:
 
     def __init__(self, sleep_seconds=5, time_step=None, schedule=None):
         """Initializes the time simulation"""
+
+        logger.info("init TimeSimulation")
         self.sleep_seconds = sleep_seconds
         self.time_step = time_step
         if self.time_step is None:
             self.time_step = datetime.timedelta(minutes=self.sleep_seconds)
 
         # Read data from disk
+        logger.info("Reading from disk")
         self.raw_df = pd.read_csv(
             f"{Path(__file__).parents[0]}/data/cta_stations.csv"
         ).sort_values("order")
 
         # Define the train schedule (same for all trains)
+        logger.info("Defining schedule")
         self.schedule = schedule
         if schedule is None:
             self.schedule = {
@@ -49,13 +53,16 @@ class TimeSimulation:
                 TimeSimulation.weekdays.sun: {0: TimeSimulation.ten_min_frequency},
             }
 
+        logger.info("Instance train lines")
         self.train_lines = [
             Line(Line.colors.blue, self.raw_df[self.raw_df["blue"]]),
             Line(Line.colors.red, self.raw_df[self.raw_df["red"]]),
             Line(Line.colors.green, self.raw_df[self.raw_df["green"]]),
         ]
+        logger.info("Train lines ready")
 
     def run(self):
+        logger.info("Calling `run()`")
         curr_time = datetime.datetime.utcnow().replace(
             hour=0, minute=0, second=0, microsecond=0
         )
@@ -80,4 +87,5 @@ class TimeSimulation:
 
 
 if __name__ == "__main__":
+    logger.info("Main call")
     TimeSimulation().run()

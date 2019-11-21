@@ -4,8 +4,8 @@ from pathlib import Path
 
 from confluent_kafka import avro
 
-from models.producer import Producer
-from models.turnstile_hardware import TurnstileHardware
+from .producer import Producer
+from .turnstile_hardware import TurnstileHardware
 
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class Turnstile(Producer):
         # TODO: Complete the below by deciding on a
         # topic name, number of partitions, and number of replicas
         super().__init__(
-            f"com.udacity.{station_name}.turnstile", # TODO: Come up with a better topic name
+            f"com.udacity.station.turnstile.v1", # TODO: Come up with a better topic name
             key_schema=Turnstile.key_schema,
             value_schema=Turnstile.value_schema,
             num_partitions=4,

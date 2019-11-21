@@ -4,8 +4,8 @@ from pathlib import Path
 
 from confluent_kafka import avro
 
-from models.turnstile import Turnstile
-from models.producer import Producer
+from .turnstile import Turnstile
+from .producer import Producer
 
 
 logger = logging.getLogger(__name__)
@@ -23,25 +23,15 @@ class Station(Producer):
 
     def __init__(self, station_id, name, color, direction_a=None, direction_b=None):
         self.name = name
-        station_name = (
-            self.name.lower()
-            .replace("/", "_and_")
-            .replace(" ", "_")
-            .replace("-", "_")
-            .replace("'", "")
-        )
 
-        #
-        #
         # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
         # replicas
-        #
-        #
-        topic_name = f"com.udacity.stations.{station_name}" # TODO: Come up with a better topic name
+
+        topic_name = f"com.udacity.station.arrivals.v1" # TODO: Come up with a better topic name
         super().__init__(
-            topic_name,
+            topic_name="com.udacity.station.arrivals.v1",
             key_schema=Station.key_schema,
-            value_schema=Station.value_schema, # TODO: Uncomment once schema is defined
+            value_schema=Station.value_schema,
             num_partitions=3,
             num_replicas=1,
         )
@@ -58,19 +48,23 @@ class Station(Producer):
     def run(self, train, direction, prev_station_id, prev_direction):
         """Simulates train arrivals at this station"""
         # TODO: Complete this function by producing an arrival message to Kafka
-        self.producer.produce(
-            topic=self.topic_name,
-            key={"timestamp": self.time_millis()},
-            value={
-                "station_id": self.station_id,
-                "train_id": train.train_id,
-                "direction": direction,
-                "line": self.color.name,
-                "train_status": train.status.name,
-                "prev_station_id": prev_station_id,
-                "prev_direction": prev_direction
-            }
-        )
+        try:
+            self.producer.produce(
+                topic=self.topic_name,
+                key={"timestamp": self.time_millis()},
+                value={
+                    "station_id": self.station_id,
+                    "train_id": train.train_id,
+                    "direction": direction,
+                    "line": self.color.name,
+                    "train_status": train.status.name,
+                    "prev_station_id": prev_station_id,
+                    "prev_direction": prev_direction
+                }
+            )
+        except Exception as e:
+            logger.fatal(e)
+            raise e
 
     def __str__(self):
         return "Station | {:^5} | {:<30} | Direction A: | {:^5} | departing to {:<30} | Direction B: | {:^5} | departing to {:<30} | ".format(

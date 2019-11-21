@@ -5,13 +5,12 @@ import random
 
 import pandas as pd
 
-from models.producer import Producer
-
+from .producer import Producer
 
 logger = logging.getLogger(__name__)
 
 
-class TurnstileHardware:
+class TurnstileHardware(Producer):
     curve_df = None
     seed_df = None
 
